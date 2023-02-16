@@ -1,38 +1,44 @@
-.App {
-  text-align: center;
-}
+.page-center{
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  background-color: red;
+  color: #fff;
 }
 
-.App-link {
-  color: #61dafb;
+.container {
+  padding: 0 2rem !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.bg-main {
+  background: #16222a; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #3a6073,
+    #16222a
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #3a6073,
+    #16222a
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.offcanvas-body {
+  display: flex !important;
+  align-items: flex-start !important;
+  flex-direction: column !important;
+}
+
+.card {
+  margin-top: 5rem !important;
+}
+
+.card-img-top{
+
+  max-height: 20rem !important;
+  width: 100% !important;
+  object-fit: cover;
+
 }
