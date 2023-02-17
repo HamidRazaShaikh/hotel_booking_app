@@ -1,15 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Country, State, City } from "country-state-city";
-import moment from "moment";
+import moment, { min } from "moment";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as yup from "yup";
 
 const Model = ({ data }) => {
   const { rent } = data;
 
-  const countryRef = useRef(null);
   const [bookingData, setBookingData] = useState();
-  // const [cityActive, setCityActive] = useState(false);
+  const nextDay = moment(bookingData?.From_date).add(1, "days");
 
-  const [country, setCountry] = useState();
+  let bookingSchema = yup.object().shape({
+    Name: yup.string().required("this feild is required."),
+    ID: yup.string().required("this feild is required."),
+    Address: yup.string().required("this feild is required."),
+    Country: yup.string().required("this feild is required."),
+    From_date: yup.date().min(new Date()).required(),
+    To_date: yup.date().min(nextDay).required(),
+  });
 
   const onUpDate = (e) => {
     e.preventDefault();
@@ -21,37 +29,29 @@ const Model = ({ data }) => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(bookingData);
+  const onFormSubmit = (values) => {
+    console.log(values);
   };
 
   useEffect(() => {
-    console.log(moment(bookingData?.From_date));
-
     const Duration = () => {
       if (bookingData?.From_date && bookingData?.To_date) {
         let { From_date, To_date } = bookingData;
 
         let duration = moment.duration(moment(To_date).diff(moment(From_date)));
- 
-          let amount = rent * duration.asDays();
-          setBookingData({
-            ...bookingData,
-            duration: duration.asDays(),
-            amount: amount,
-          });
-          return duration.asDays();
-       
-      }
 
+        let amount = rent * duration.asDays();
+        setBookingData({
+          ...bookingData,
+          duration:
+            duration.asDays() > 0 ? duration.asDays() : "choose correct date",
+          amount: amount > 0 ? `$${amount}` : "choose correct date",
+        });
+      }
     };
 
     Duration();
   }, [bookingData?.From_date, bookingData?.To_date]);
-
-  console.log(bookingData);
 
   return (
     <div>
@@ -92,130 +92,160 @@ const Model = ({ data }) => {
             <div className="modal-body">
               {/* form for booking */}
 
-              <form
-                id="booking-form"
-                className="row g-3"
-                onSubmit={handleSubmit}
+              <Formik
+                onSubmit={(values, { setSubmitting }) => {
+                  onFormSubmit(values);
+                  setSubmitting(false);
+                }}
+              
+                initialValues={{
+                  Name: "",
+                  ID: "",
+                  Address: "",
+                  Country: "Afghanistan",
+                  From_date: "",
+                  To_date: "",
+                }}
+                validationSchema={bookingSchema}
               >
-                <div className="col-md-6">
-                  <label className="form-label">Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    onChange={onUpDate}
-                    name="Name"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">ID.</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    onChange={onUpDate}
-                    name="ID"
-                  />
-                </div>
-                <div className="col-12">
-                  <label className="form-label">Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="1234 Main St"
-                    onChange={onUpDate}
-                    name="Address"
-                  />
-                </div>
-                <div className="col-12">
-                  <label className="form-label">Country</label>
-                  <select
-                    ref={countryRef}
-                    className="form-select"
-                    onChange={onUpDate}
-                    name="Country"
-                  >
-                    {Country.getAllCountries().map((country, index) => {
-                      return (
-                        <option key={index} value={country.isoCode}>
-                          {country.name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
+                {({ isSubmitting, handleChange }) => (
+                  <React.Fragment>
+                    <Form id="booking-form" className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">Name</label>
+                        <Field
+                          type="text"
+                          className="form-control"
+                          name="Name"
+                        />
+                        <ErrorMessage
+                          name="Name"
+                          className="alert alert-danger"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">ID.</label>
+                        <Field type="text" className="form-control" name="ID" />
+                        <ErrorMessage
+                          name="ID"
+                          className="alert alert-danger"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Address</label>
 
-                {/*              
-                  <div className="col-md-6">
-                    <label className="form-label">City</label>
-                    <select className="form-select">
-                      {City.getAllCities(bookingData?.isoCode).map(
-                        (city, index) => {
-                          return (
-                            <option key={index} value={city}>
-                              {city.name}
-                            </option>
-                          );
-                        }
-                      )}
-                    </select>
-                  </div> 
-               */}
+                        <Field
+                          type="text"
+                          className="form-control"
+                          placeholder="1234 Main St"
+                          name="Address"
+                        />
+                        <ErrorMessage
+                          name="Address"
+                          className="alert alert-danger"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Country</label>
+                        <Field
+                          className="form-select"
+                          name="Country"
+                          as="select"
+                        >
+                          {Country.getAllCountries().map((country, index) => {
+                            return (
+                              <option key={index} value={country.isoCode}>
+                                {country.name}
+                              </option>
+                            );
+                          })}
+                        </Field>
 
-                <div className="col-md-6">
-                  <label className="form-label">From</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    onChange={onUpDate}
-                    name="From_date"
-                  />
-                </div>
+                        <ErrorMessage
+                          name="Country"
+                          className="alert alert-danger"
+                        />
+                      </div>
 
-                <div className="col-md-6">
-                  <label className="form-label">To</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    onChange={onUpDate}
-                    name="To_date"
-                  />
-                </div>
+                      <div className="col-md-6">
+                        <label className="form-label">From</label>
 
-                <div className="col-md-6">
-                  <label className="form-label">Duration</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder={bookingData?.duration || 0}
-                    aria-label="Disabled input example"
-                    value={bookingData?.duration || 0}
-                    name="duration"
-                    disabled
-                  />
-                </div>
+                        <Field
+                          type="date"
+                          className="form-control"
+                          onChange={(e) => {
+                            handleChange(e);
+                            onUpDate(e);
+                          }}
+                          name="From_date"
+                        />
 
-                <div className="col-md-6">
-                  <label className="form-label">Total Rent Amount</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder={bookingData?.amount ? bookingData?.amount : 0}
-                    aria-label="Disabled input example"
-                    disabled
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Pay
-                  </button>
-                </div>
-              </form>
+                        <ErrorMessage
+                          name="From_date"
+                          className="alert alert-danger"
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">To</label>
+
+                        <Field
+                          type="date"
+                          className="form-control"
+                          onChange={(e) => {
+                            handleChange(e);
+                            onUpDate(e);
+                          }}
+                          name="To_date"
+                        />
+
+                        <ErrorMessage
+                          name="To_date"
+                          className="alert alert-danger"
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Duration</label>
+                        <Field
+                          className="form-control"
+                          type="text"
+                          placeholder={bookingData?.duration || 0}
+                          aria-label="Disabled input example"
+                          name="duration"
+                          disabled
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Total Rent Amount</label>
+                        <Field
+                          className="form-control"
+                          type="text"
+                          name="amount"
+                          placeholder={
+                            bookingData?.amount ? bookingData?.amount : 0
+                          }
+                          aria-label="Disabled input example"
+                          disabled
+                        />
+                      </div>
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                          Pay
+                        </button>
+                      </div>
+                    </Form>
+                  </React.Fragment>
+                )}
+              </Formik>
             </div>
           </div>
         </div>
