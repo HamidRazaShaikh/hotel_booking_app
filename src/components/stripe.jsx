@@ -1,57 +1,111 @@
-
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-const totalPrice = 1400; // this means 14 usd and can also be calculated at the backend
+
+
+export function CheckoutForm({data}) {
 
 
 
+  const {Name , Country , ID, amount } = data
 
 
 
+  const [isPaymentLoading, setPaymentLoading] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
+  const stripe = useStripe();
+  const elements = useElements();
 
-
-export const CheckoutForm = () => {
-  
-    const [clientSecret, setClientSecret] = useState("");
-    const stripe = useStripe();
-    const elements = useElements();
-  
-    // STEP 1: create a payment intent and getting the secret
-    useEffect(() => {
-      fetch("http://localhost:4000/create-payment-intent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ price: totalPrice }),
-      })
-        .then(res => res.json())
-        .then((data) => {
-          setClientSecret(data.clientSecret);  // <-- setting the client secret here
-        });
-    }, []);
-  
-    // STEP 2: make the payment after filling the form properly
-    const makePayment = async () => {
-       const payload = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
+  useEffect(() => {
+    fetch("http://localhost:4000/create-payment-intent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ price: amount }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setClientSecret(data.clientSecret); // <-- setting the client secret here
       });
+  }, []);
+
+  const payMoney = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) {
+      return;
     }
+    setPaymentLoading(true);
 
-
-    const handleChange = (e) => {
-        e.preventDefault();
-    
-       console.log(e)
-      };
-  
-    return (
-      <form id="payment-form" onSubmit={makePayment}>
-        <CardElement id="card-element" onChange={handleChange} />
-        <button id="submit"> Pay Now </button>
-      </form>
-    );
+    const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: Name,
+        },
+      },
+    });
+    setPaymentLoading(false);
+    if (paymentResult.error) {
+      alert(paymentResult.error.message);
+    } else {
+      if (paymentResult.paymentIntent.status === "succeeded") {
+        alert("Success!");
+      }
+    }
   };
+
+  return (
+    <div
+      style={{
+        padding: "3rem",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "500px",
+          margin: "0 auto",
+        }}
+      >
+         <fieldset style = {{border: '1px solid grey', borderRadius: '1rem', padding : '1.5rem'}}>
+    <legend style = {{position : 'relative' , top: '-2.6rem', backgroundColor: '#fff', width: 'fit-content'}}>Payment</legend>
+        <form
+          style={{
+            display: "block",
+            width: "100%",
+          }}
+          onSubmit={payMoney}
+        >
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+
+            <input placeholder = {`Client Name : ${Name}`} className="cardS" disabled style ={{marginBottom : 10}}/>
+            <input placeholder = {`Client Country : ${Country}`} className="cardS" disabled style ={{marginBottom : 10}}/>
+             <input placeholder = {`Client Amount : $${amount}`} className="cardS" disabled style ={{marginBottom : 10}}/>
+             <p>Enter your card credientials</p>
+            <CardElement
+              className="cardS"
+              options={{
+                style: {
+                  base: {
+                    backgroundColor: "white",
+                  },
+                },
+              }}
+            />
+            <button className="pay-button" disabled={isPaymentLoading}>
+              {isPaymentLoading ? "Loading..." : "Pay"}
+            </button>
+          </div>
+        </form>
+        </fieldset>
+      </div>
+    </div>
+  );
+}
