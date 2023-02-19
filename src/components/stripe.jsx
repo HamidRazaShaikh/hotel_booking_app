@@ -19,7 +19,7 @@ export const CheckoutForm = () => {
   
     // STEP 1: create a payment intent and getting the secret
     useEffect(() => {
-      fetch("http://localhost:3001/create-payment-intent", {
+      fetch("http://localhost:4000/create-payment-intent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
