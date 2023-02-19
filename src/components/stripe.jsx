@@ -58,7 +58,8 @@ export function CheckoutForm({data}) {
   return (
     <div
       style={{
-        padding: "3rem",
+        padding: "1rem 1rem",
+        marginBottom: '4rem'
       }}
     >
       <div
@@ -76,6 +77,8 @@ export function CheckoutForm({data}) {
           }}
           onSubmit={payMoney}
         >
+
+<p>Client Information</p>
 
           <div
             style={{
