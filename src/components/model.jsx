@@ -282,10 +282,10 @@ const Model = ({ data }) => {
                 )}
               </Formik>
             </div>
-{/* 
+
             <Elements stripe={stripePromise}>
               <CheckoutForm />
-            </Elements> */}
+            </Elements>
           </div>
         </div>
       </div>
