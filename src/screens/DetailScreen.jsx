@@ -9,6 +9,10 @@ import Carousel from "../components/carousel";
 import Table from "../components/tables";
 import Model from "../components/model";
 
+// Stripe integration
+
+
+
 const DetailScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();

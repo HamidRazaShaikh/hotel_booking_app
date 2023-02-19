@@ -3,6 +3,17 @@ import { Country, State, City } from "country-state-city";
 import moment, { min } from "moment";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as yup from "yup";
+import { CheckoutForm } from "./stripe";
+
+
+// stripe setup
+
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51Mcbc4B6T4EqkNJLRoBdmSOyQZIB1dXBdbYzRFh0IlG29pSRIT2htJTteFSi5HOxf4YFs41Fi8vftQU3OyHkO1cP00DzCcoQpz"
+);
 
 const Model = ({ data }) => {
   const { rent } = data;
@@ -53,6 +64,10 @@ const Model = ({ data }) => {
     Duration();
   }, [bookingData?.From_date, bookingData?.To_date]);
 
+
+
+
+
   return (
     <div>
       {/* <!-- Button trigger modal --> */}
@@ -97,12 +112,12 @@ const Model = ({ data }) => {
                   onFormSubmit(values);
                   setSubmitting(false);
                 }}
-              
                 initialValues={{
                   Name: "",
                   ID: "",
                   Address: "",
                   Country: "Afghanistan",
+
                   From_date: "",
                   To_date: "",
                 }}
@@ -151,10 +166,14 @@ const Model = ({ data }) => {
                           className="form-select"
                           name="Country"
                           as="select"
+                          // onChange={(e) => {
+                          //   handleChange(e);
+                          //   onUpDate(e);
+                          // }}
                         >
                           {Country.getAllCountries().map((country, index) => {
                             return (
-                              <option key={index} value={country.isoCode}>
+                              <option key={index} value={country.name}>
                                 {country.name}
                               </option>
                             );
@@ -166,6 +185,22 @@ const Model = ({ data }) => {
                           className="alert alert-danger"
                         />
                       </div>
+                      {/* 
+
+{!!bookingData?.Country?  <div className="col-md-6">
+                    <label className="form-label">City</label>
+                    <Field  className="form-select" name = 'City' as = 'select' disabled = {true}>
+                      {City.getAllCities(bookingData?.Country).map(
+                        (city, index) => {
+                          return (
+                            <option key={index} value={city}>
+                              {city.name}
+                            </option>
+                          );
+                        }
+                      )}
+                    </Field>
+                  </div> : null } */}
 
                       <div className="col-md-6">
                         <label className="form-label">From</label>
@@ -247,6 +282,10 @@ const Model = ({ data }) => {
                 )}
               </Formik>
             </div>
+{/* 
+            <Elements stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements> */}
           </div>
         </div>
       </div>
