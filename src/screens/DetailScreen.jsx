@@ -19,6 +19,8 @@ const DetailScreen = () => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
+  const refresh = () => window.location.reload(true)
+
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
@@ -52,7 +54,7 @@ const DetailScreen = () => {
       <div style={{ marginTop: "5rem" }}>
         <Carousel data={data} />
         <Table data={data} />
-        <Model data={data} />
+        <Model data={data} refresh = {refresh} />
       </div>
     </div>
   );

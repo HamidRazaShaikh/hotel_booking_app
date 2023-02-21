@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Model from "./model";
 
 const CardImage = ({ item }) => {
 
@@ -17,15 +18,17 @@ const CardImage = ({ item }) => {
           <h6>Rent: ${item ?.rent}</h6>
           <h6 >Availibility : {item ?.bookings?.length === 0 ? <span className="card-text">Available</span> : <span className="card-text">Unavailable</span>}</h6>
         </div>
-        
 
-        <Link to = {`/details/${item?._id}`} className="btn btn-primary mt-4">
+        <div className = 'btncontainer'>
+
+        <Link to = {`/details/${item?._id}`} className="btn btn-primary">
           Details
         </Link>
 
-        <a href="#" className="btn btn-danger mt-4 mx-4">
-          Book Now
-        </a>
+        <Model data={item}/>
+        </div>
+        
+
       </div>
     </div>
   );

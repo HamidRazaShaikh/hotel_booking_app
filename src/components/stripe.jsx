@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import axios from "../axiosInstance";
+import { useNavigate } from "react-router-dom";
 
-
-
-export function CheckoutForm({data}) {
-
-
-
-  const {Name , Country , ID, amount } = data
-
-
+export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
+  const { Name, Country, amount } = ClientData;
+  const { _id } = roomData;
+  const navigate = useNavigate();
 
   const [isPaymentLoading, setPaymentLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
@@ -30,6 +27,23 @@ export function CheckoutForm({data}) {
       });
   }, []);
 
+  const addBooking = async () => {
+    try {
+      let previousBookings = await roomData?.bookings;
+      let bookingData = await {
+        ...roomData,
+        bookings: [...previousBookings, ClientData],
+      };
+
+      const res = await axios.put("/booking", { id: _id, bookingData });
+      const { data } = await res?.data;
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const payMoney = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) {
@@ -48,9 +62,15 @@ export function CheckoutForm({data}) {
     setPaymentLoading(false);
     if (paymentResult.error) {
       alert(paymentResult.error.message);
+      handleClose();
+
+      navigate(`/details/${_id}`);
     } else {
       if (paymentResult.paymentIntent.status === "succeeded") {
+        await addBooking();
         alert("Success!");
+        handleClose();
+        navigate(`/details/${_id}`);
       }
     }
   };
@@ -59,7 +79,7 @@ export function CheckoutForm({data}) {
     <div
       style={{
         padding: "1rem 1rem",
-        marginBottom: '4rem'
+        marginBottom: "4rem",
       }}
     >
       <div
@@ -68,45 +88,73 @@ export function CheckoutForm({data}) {
           margin: "0 auto",
         }}
       >
-         <fieldset style = {{border: '1px solid grey', borderRadius: '1rem', padding : '1.5rem'}}>
-    <legend style = {{position : 'relative' , top: '-2.6rem', backgroundColor: '#fff', width: 'fit-content'}}>Payment</legend>
-        <form
+        <fieldset
           style={{
-            display: "block",
-            width: "100%",
+            border: "1px solid grey",
+            borderRadius: "1rem",
+            padding: "1.5rem",
           }}
-          onSubmit={payMoney}
         >
-
-<p>Client Information</p>
-
-          <div
+          <legend
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              position: "relative",
+              top: "-2.6rem",
+              backgroundColor: "#fff",
+              width: "fit-content",
             }}
           >
+            Payment
+          </legend>
+          <form
+            style={{
+              display: "block",
+              width: "100%",
+            }}
+            onSubmit={payMoney}
+          >
+            <p>Client Information</p>
 
-            <input placeholder = {`Client Name : ${Name}`} className="cardS" disabled style ={{marginBottom : 10}}/>
-            <input placeholder = {`Client Country : ${Country}`} className="cardS" disabled style ={{marginBottom : 10}}/>
-             <input placeholder = {`Client Amount : $${amount}`} className="cardS" disabled style ={{marginBottom : 10}}/>
-             <p>Enter your card credientials</p>
-            <CardElement
-              className="cardS"
-              options={{
-                style: {
-                  base: {
-                    backgroundColor: "white",
-                  },
-                },
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
-            />
-            <button className="pay-button" disabled={isPaymentLoading}>
-              {isPaymentLoading ? "Loading..." : "Pay"}
-            </button>
-          </div>
-        </form>
+            >
+              <input
+                placeholder={`Client Name : ${Name}`}
+                className="cardS"
+                disabled
+                style={{ marginBottom: 10 }}
+              />
+              <input
+                placeholder={`Client Country : ${Country}`}
+                className="cardS"
+                disabled
+                style={{ marginBottom: 10 }}
+              />
+              <input
+                placeholder={`Client Amount : $${amount}`}
+                className="cardS"
+                disabled
+                style={{ marginBottom: 10 }}
+              />
+              <p>Enter your card credientials</p>
+              <CardElement
+                className="cardS"
+                options={{
+                  style: {
+                    base: {
+                      backgroundColor: "white",
+                    },
+                  },
+                }}
+              />
+              <button className="pay-button" disabled={isPaymentLoading}>
+                {isPaymentLoading ? "Loading..." : "Pay"}
+              </button>
+            </div>
+          </form>
         </fieldset>
       </div>
     </div>

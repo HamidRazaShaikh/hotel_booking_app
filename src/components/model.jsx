@@ -10,16 +10,17 @@ import { CheckoutForm } from "./stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const Model = ({ data }) => {
+const Model = ({ data , refresh }) => {
   const { rent, _id } = data;
+  const closeRef = useRef();
 
   const stripe = loadStripe(
     "pk_test_51Mcbc4B6T4EqkNJLRoBdmSOyQZIB1dXBdbYzRFh0IlG29pSRIT2htJTteFSi5HOxf4YFs41Fi8vftQU3OyHkO1cP00DzCcoQpz"
   );
 
   const [bookingData, setBookingData] = useState();
-  const [formData , setFormData] = useState()
-  const [showPay , setShowPay] = useState(false)
+  const [formData, setFormData] = useState();
+  const [showPay, setShowPay] = useState(false);
   const nextDay = moment(bookingData?.From_date).add(1, "days");
   let bookingSchema = yup.object().shape({
     Name: yup.string().required("this feild is required."),
@@ -41,17 +42,14 @@ const Model = ({ data }) => {
   };
 
   const onFormSubmit = (values) => {
-    setFormData({...data , ...values, ...bookingData})
-    setShowPay(true)
-   
+    setFormData({ roomData: data, ClientData: { ...values, ...bookingData } });
+    setShowPay(true);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
+    setShowPay(false);
+  }, []);
 
-    setShowPay(false)
-  },[])
-
- 
   useEffect(() => {
     const Duration = () => {
       if (bookingData?.From_date && bookingData?.To_date) {
@@ -70,15 +68,19 @@ const Model = ({ data }) => {
     };
 
     Duration();
-    
   }, [bookingData?.From_date, bookingData?.To_date]);
+
+  const handleClose = () => {
+    closeRef.current.click();
+    refresh()
+  };
 
   return (
     <div>
       {/* <!-- Button trigger modal --> */}
       <button
         type="button"
-        className="btn btn-danger mb-5"
+        className="btn btn-danger"
         data-bs-toggle="modal"
         data-bs-target="#staticBackdrop"
       >
@@ -107,7 +109,8 @@ const Model = ({ data }) => {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
-                onClick={()=>setShowPay(false)}
+                onClick={() => setShowPay(false)}
+                ref = {closeRef}
               ></button>
             </div>
             <div className="modal-body">
@@ -138,8 +141,7 @@ const Model = ({ data }) => {
                           type="text"
                           className="form-control"
                           name="Name"
-                          disabled = {showPay}
-                         
+                          disabled={showPay}
                         />
                         <ErrorMessage
                           name="Name"
@@ -148,11 +150,15 @@ const Model = ({ data }) => {
                       </div>
                       <div className="col-md-6">
                         <label className="form-label">ID.</label>
-                        <Field type="text" className="form-control" name="ID"   disabled = {showPay}/>
+                        <Field
+                          type="text"
+                          className="form-control"
+                          name="ID"
+                          disabled={showPay}
+                        />
                         <ErrorMessage
                           name="ID"
                           className="alert alert-danger"
-                         
                         />
                       </div>
                       <div className="col-12">
@@ -163,12 +169,12 @@ const Model = ({ data }) => {
                           className="form-control"
                           placeholder="1234 Main St"
                           name="Address"
-                          disabled = {showPay}
+                          disabled={showPay}
                         />
                         <ErrorMessage
                           name="Address"
                           className="alert alert-danger"
-                          disabled = {showPay}
+                          disabled={showPay}
                         />
                       </div>
                       <div className="col-12">
@@ -177,7 +183,7 @@ const Model = ({ data }) => {
                           className="form-select"
                           name="Country"
                           as="select"
-                          disabled = {showPay}
+                          disabled={showPay}
                           // onChange={(e) => {
                           //   handleChange(e);
                           //   onUpDate(e);
@@ -197,22 +203,6 @@ const Model = ({ data }) => {
                           className="alert alert-danger"
                         />
                       </div>
-                      {/* 
-
-{!!bookingData?.Country?  <div className="col-md-6">
-                    <label className="form-label">City</label>
-                    <Field  className="form-select" name = 'City' as = 'select' disabled = {true}>
-                      {City.getAllCities(bookingData?.Country).map(
-                        (city, index) => {
-                          return (
-                            <option key={index} value={city}>
-                              {city.name}
-                            </option>
-                          );
-                        }
-                      )}
-                    </Field>
-                  </div> : null } */}
 
                       <div className="col-md-6">
                         <label className="form-label">From</label>
@@ -225,7 +215,7 @@ const Model = ({ data }) => {
                             onUpDate(e);
                           }}
                           name="From_date"
-                          disabled = {showPay}
+                          disabled={showPay}
                         />
 
                         <ErrorMessage
@@ -245,7 +235,7 @@ const Model = ({ data }) => {
                             onUpDate(e);
                           }}
                           name="To_date"
-                          disabled = {showPay}
+                          disabled={showPay}
                         />
 
                         <ErrorMessage
@@ -273,7 +263,7 @@ const Model = ({ data }) => {
                           type="text"
                           name="amount"
                           placeholder={
-                            bookingData?.amount ? `$${bookingData?.amount }`: 0
+                            bookingData?.amount ? `$${bookingData?.amount}` : 0
                           }
                           aria-label="Disabled input example"
                           disabled
@@ -284,11 +274,15 @@ const Model = ({ data }) => {
                           type="button"
                           className="btn btn-secondary"
                           data-bs-dismiss="modal"
-                          onClick={()=>setShowPay(false)}
+                          onClick={() => setShowPay(false)}
                         >
                           Close
                         </button>
-                        <button type="submit" className="btn btn-primary" disabled = {showPay}>
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={showPay}
+                        >
                           Submit
                         </button>
                       </div>
@@ -298,7 +292,11 @@ const Model = ({ data }) => {
               </Formik>
             </div>
 
-           { showPay?  <Elements stripe={stripe}><CheckoutForm data = {formData} /></Elements> : null}
+            {showPay ? (
+              <Elements stripe={stripe}>
+                <CheckoutForm data={formData}  handleClose = {handleClose}/>
+              </Elements>
+            ) : null}
           </div>
         </div>
       </div>
