@@ -40,9 +40,6 @@ const DetailScreen = () => {
     fetchData();
   }, []);
 
-  const handleBooking = () => {
-    console.log("booking");
-  };
 
   if (isLoading) {
     return <Loader />;

@@ -10,7 +10,7 @@ import { CheckoutForm } from "./stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const Model = ({ data , refresh }) => {
+const Model = ({ data, refresh }) => {
   const { rent, _id } = data;
   const closeRef = useRef();
 
@@ -70,9 +70,12 @@ const Model = ({ data , refresh }) => {
     Duration();
   }, [bookingData?.From_date, bookingData?.To_date]);
 
-  const handleClose = () => {
+  const handleClose = ({ reload }) => {
     closeRef.current.click();
-    refresh()
+
+    if (reload) {
+      refresh();
+    }
   };
 
   return (
@@ -110,7 +113,7 @@ const Model = ({ data , refresh }) => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 onClick={() => setShowPay(false)}
-                ref = {closeRef}
+                ref={closeRef}
               ></button>
             </div>
             <div className="modal-body">
@@ -294,7 +297,7 @@ const Model = ({ data , refresh }) => {
 
             {showPay ? (
               <Elements stripe={stripe}>
-                <CheckoutForm data={formData}  handleClose = {handleClose}/>
+                <CheckoutForm data={formData} handleClose={handleClose} />
               </Elements>
             ) : null}
           </div>

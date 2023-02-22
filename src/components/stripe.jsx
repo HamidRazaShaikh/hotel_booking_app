@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
   const { Name, Country, amount } = ClientData;
@@ -32,7 +33,7 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
       let previousBookings = await roomData?.bookings;
       let bookingData = await {
         ...roomData,
-        bookings: [...previousBookings, ClientData],
+        bookings: [...previousBookings, {id: crypto.randomUUID(), booked_At: moment() , ...ClientData}],
       };
 
       const res = await axios.put("/booking", { id: _id, bookingData });
@@ -62,15 +63,15 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
     setPaymentLoading(false);
     if (paymentResult.error) {
       alert(paymentResult.error.message);
-      handleClose();
+      handleClose({reload : true});
 
       navigate(`/details/${_id}`);
     } else {
       if (paymentResult.paymentIntent.status === "succeeded") {
         await addBooking();
         alert("Success!");
-        handleClose();
-        navigate(`/details/${_id}`);
+        handleClose({reload : false});
+        navigate(`/bookings/${_id}`);
       }
     }
   };
