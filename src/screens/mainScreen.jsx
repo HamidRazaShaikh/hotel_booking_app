@@ -9,13 +9,19 @@ const MainScreen = (props) => {
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+//   const token = localStorage.getItem('token');
+//   const config = {
+//     headers: { Authorization: `bearer ${token}` }
+// };
+
+
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const res = await axios.get("/rooms");       
-       const {data} = await res?.data
+        const res = await axios.get("/api/rooms/allrooms");
+        const { data } = await res?.data;
         setData(data);
         setIsLoading(false);
       } catch (error) {

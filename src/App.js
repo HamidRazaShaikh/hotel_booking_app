@@ -5,6 +5,8 @@ import PageNotFound from "./screens/404";
 import { Routes, Route, Outlet, Link } from "react-router-dom";
 import DetailScreen from "./screens/DetailScreen";
 import BookingScreen from "./screens/BookingScreen";
+import SignUpScreen from "./screens/SignUpScreen";
+import SignInScreen from "./screens/SignInScreen";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
 
       <Routes>
         <Route path="*" element={<PageNotFound />} />
+        <Route exact path="/" element={<SignInScreen/>}></Route> 
+        <Route exact path="/Signup" element={<SignUpScreen/>}></Route>     
         <Route exact path="/main" element={<MainScreen />}></Route>       
         <Route exact path="/details/:id" element={<DetailScreen/>}></Route>
         <Route exact path="/bookings/:id" element={<BookingScreen/>}></Route>

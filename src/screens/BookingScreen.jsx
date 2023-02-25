@@ -1,4 +1,5 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
@@ -14,12 +15,13 @@ const BookingScreen = () => {
   const [data, setData] = useState();
   const [bookings, setBookings] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [sortedBookings, setSortedBookings] = useState();
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const res = await axios.get("/roombyid", {
+        const res = await axios.get("/api/rooms/roombyid", {
           params: { id },
         });
         const { data } = await res?.data;
@@ -43,7 +45,7 @@ const BookingScreen = () => {
       return dateA < dateB ? 1 : -1;
     });
 
-    setBookings(sortedBookings);
+    setSortedBookings(sortedBookings);
   }, [bookings, data]);
 
   const CancelBooking = async (id) => {
@@ -53,7 +55,7 @@ const BookingScreen = () => {
       let upDatedBookings = await bookings?.filter((item) => item.id !== id);
       let bookingData = await { ...currentData, bookings: upDatedBookings };
 
-      const res = await axios.put("/booking", {
+      const res = await axios.put("/api/rooms/booking", {
         id: currentData?._id,
         bookingData,
       });
@@ -75,10 +77,17 @@ const BookingScreen = () => {
     <div className="container">
       <Navbar />
       <div style={{ marginTop: "5rem" }}>
-        <h1>Your bookings</h1>
+        <h1>
+          <span style={{ marginRight: 20 }}>
+            <FaArrowLeft size={25} />
+          </span>
+          Your bookings
+        </h1>
         <div className="bookingContainer">
-          {!!bookings &&
-            bookings.map((item, index) => {
+        
+
+          {!!sortedBookings &&
+            sortedBookings.map((item, index) => {
               return (
                 <Card
                   item={item}

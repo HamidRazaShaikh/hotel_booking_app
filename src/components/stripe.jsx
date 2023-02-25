@@ -36,10 +36,11 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
         bookings: [...previousBookings, {id: crypto.randomUUID(), booked_At: moment() , ...ClientData}],
       };
 
-      const res = await axios.put("/booking", { id: _id, bookingData });
+      const res = await axios.put("/api/rooms/booking", { id: _id, bookingData });
       const { data } = await res?.data;
+      
 
-      console.log(data);
+    
     } catch (error) {
       console.log(error);
     }

@@ -25,7 +25,7 @@ const DetailScreen = () => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const res = await axios.get("/roombyid", {
+        const res = await axios.get("/api/rooms/roombyid", {
           params: { id },
         });
         const { data } = await res?.data;
