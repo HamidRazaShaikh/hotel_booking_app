@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { useAuth } from "../utils/auth";
 import { FaUserTie, FaEye, FaEyeSlash } from "react-icons/fa";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form, ErrorMessage, replace } from "formik";
 import * as yup from "yup";
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import axios from "../axiosInstance";
 import { LoaderUtils } from "../components/loading";
 import { useNavigate } from "react-router-dom";
 
 const SignInScreen = () => {
   const navigate = useNavigate();
+  const Auth = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,11 +30,10 @@ const SignInScreen = () => {
       try {
         const res = await axios.post("/api/users/signin", { userData: values });
         const { data } = await res?.data;
-
-        console.log(data);
-
+        let { _id, name, email } = data;         
         setIsLoading(false);
-        navigate("/main");
+        Auth.login({ _id, name, email });
+      
       } catch (error) {
         const { message } = error?.response?.data;
         setIsLoading(false);

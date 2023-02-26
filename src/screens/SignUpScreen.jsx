@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../utils/auth";
 import { FaUserTie, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as yup from "yup";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const SignUpScreen = () => {
   const navigate = useNavigate();
+  const Auth = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,10 +31,10 @@ const SignUpScreen = () => {
       console.log(values);
       try {
         const res = await axios.post("/api/users/signup", { userData: values });
-        const { data} = await res?.data;
-        // localStorage.setItem('token', token);
+        const { data } = await res?.data;
+        let { _id, name, email } = data;
+        Auth.login({ _id, name, email });
         setIsLoading(false);
-        navigate("/main");
       } catch (error) {
         console.log(error);
         const { message } = error?.response?.data;
