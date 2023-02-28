@@ -141,9 +141,14 @@ const MainScreen = (props) => {
               name="check_in_date"
               // value={dates?.check_in_date?.date}
             />
-            
-            {dates?.check_in_date?.date?  (!dates?.check_in_date?.isValidated && <label style={{ color: "red" }}> Invalid date</label>) :  
-            (!dates?.check_in_date?.date && <label style={{ color: "blue" }}> pick a date</label>  )}
+
+            {dates?.check_in_date?.date
+              ? !dates?.check_in_date?.isValidated && (
+                  <label style={{ color: "red" }}> Invalid date</label>
+                )
+              : !dates?.check_in_date?.date && (
+                  <label style={{ color: "blue" }}> pick a date</label>
+                )}
           </div>
 
           <div className="p-2 w-100 align-items-center d-flex flex-column">
@@ -153,17 +158,15 @@ const MainScreen = (props) => {
               className="form-control"
               onChange={handleChange}
               name="check_out_date"
-
             />
 
-
-            {dates?.check_out_date?.date?  (!dates?.check_out_date?.isValidated && <label style={{ color: "red" }}> Invalid date</label>) :  
-            (!dates?.check_out_date?.date && <label style={{ color: "blue" }}> pick a date</label>  )}
-
-          
-
-
-  
+            {dates?.check_out_date?.date
+              ? !dates?.check_out_date?.isValidated && (
+                  <label style={{ color: "red" }}> Invalid date</label>
+                )
+              : !dates?.check_out_date?.date && (
+                  <label style={{ color: "blue" }}> pick a date</label>
+                )}
           </div>
 
           <div className="p-2 w-100 align-items-center d-flex flex-column">
@@ -176,8 +179,6 @@ const MainScreen = (props) => {
               disabled={true}
               value={duration}
             />
-
-            
           </div>
         </div>
       </div>
