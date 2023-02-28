@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (data) => {
     setUser(data);
-    navigate("/");
+    navigate("/", { replace: true });
   };
 
   const logout = () => {

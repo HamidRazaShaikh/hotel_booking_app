@@ -10,65 +10,55 @@ import { CheckoutForm } from "./stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const Model = ({ data, refresh }) => {
+const Model = ({ data, refresh, active, bookingData }) => {
   const { rent, _id } = data;
   const closeRef = useRef();
+
+  const amount = rent * bookingData?.duration;
 
   const stripe = loadStripe(
     "pk_test_51Mcbc4B6T4EqkNJLRoBdmSOyQZIB1dXBdbYzRFh0IlG29pSRIT2htJTteFSi5HOxf4YFs41Fi8vftQU3OyHkO1cP00DzCcoQpz"
   );
 
-  const [bookingData, setBookingData] = useState();
+  // const [booking, setBooking] = useState();
   const [formData, setFormData] = useState();
   const [showPay, setShowPay] = useState(false);
-  const nextDay = moment(bookingData?.From_date).add(1, "days");
+
+  // const nextDay = moment(bookingData?.From_date).add(1, "days");
   let bookingSchema = yup.object().shape({
     Name: yup.string().required("this feild is required."),
     ID: yup.string().required("this feild is required."),
     Address: yup.string().required("this feild is required."),
     Country: yup.string().required("this feild is required."),
-    From_date: yup.date().min(new Date()).required(),
-    To_date: yup.date().min(nextDay).required(),
+
+    // From_date: yup.date().min(new Date()).required(),
+    // To_date: yup.date().min(nextDay).required(),
   });
 
-  const onUpDate = (e) => {
-    e.preventDefault();
+  // const onUpDate = (e) => {
+  //   e.preventDefault();
 
-    setBookingData({
-      ...bookingData,
+  //   setBooking({
+  //     ...bookingData,
+  //     ...booking,
 
-      [e.target.name]: e.target.value,
-    });
-  };
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
 
   const onFormSubmit = (values) => {
-    setFormData({ roomData: data, ClientData: { ...values, ...bookingData } });
+    setFormData({
+      roomData: data,
+      ClientData: { ...values, ...bookingData, amount },
+    });
     setShowPay(true);
   };
+
+
 
   useEffect(() => {
     setShowPay(false);
   }, []);
-
-  useEffect(() => {
-    const Duration = () => {
-      if (bookingData?.From_date && bookingData?.To_date) {
-        let { From_date, To_date } = bookingData;
-
-        let duration = moment.duration(moment(To_date).diff(moment(From_date)));
-
-        let amount = rent * duration.asDays();
-        setBookingData({
-          ...bookingData,
-          duration:
-            duration.asDays() > 0 ? duration.asDays() : "choose correct date",
-          amount: amount > 0 ? amount : "choose correct date",
-        });
-      }
-    };
-
-    Duration();
-  }, [bookingData?.From_date, bookingData?.To_date]);
 
   const handleClose = ({ reload }) => {
     closeRef.current.click();
@@ -86,6 +76,7 @@ const Model = ({ data, refresh }) => {
         className="btn btn-danger"
         data-bs-toggle="modal"
         data-bs-target="#staticBackdrop"
+        disabled={active}
       >
         Book Now
       </button>
@@ -211,19 +202,11 @@ const Model = ({ data, refresh }) => {
                         <label className="form-label">From</label>
 
                         <Field
-                          type="date"
+                          type="text"
                           className="form-control"
-                          onChange={(e) => {
-                            handleChange(e);
-                            onUpDate(e);
-                          }}
                           name="From_date"
-                          disabled={showPay}
-                        />
-
-                        <ErrorMessage
-                          name="From_date"
-                          className="alert alert-danger"
+                          disabled={true}
+                          placeholder={bookingData?.From_date}
                         />
                       </div>
 
@@ -231,14 +214,11 @@ const Model = ({ data, refresh }) => {
                         <label className="form-label">To</label>
 
                         <Field
-                          type="date"
+                          type="text"
                           className="form-control"
-                          onChange={(e) => {
-                            handleChange(e);
-                            onUpDate(e);
-                          }}
+                          placeholder={bookingData?.To_date}
                           name="To_date"
-                          disabled={showPay}
+                          disabled={true}
                         />
 
                         <ErrorMessage
@@ -265,9 +245,7 @@ const Model = ({ data, refresh }) => {
                           className="form-control"
                           type="text"
                           name="amount"
-                          placeholder={
-                            bookingData?.amount ? `$${bookingData?.amount}` : 0
-                          }
+                          placeholder={amount ? `$${amount}` : 0}
                           aria-label="Disabled input example"
                           disabled
                         />

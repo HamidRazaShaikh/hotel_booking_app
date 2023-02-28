@@ -98,6 +98,15 @@
   
 }
 
+.scrollDiv{
+
+
+  max-height: 100vh;
+  overflow-x: scroll;
+  border: 2px solid grey;
+  padding: 1rem;
+}
+
 
 /* strip style */
 

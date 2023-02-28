@@ -8,6 +8,7 @@ import CardImage from "../components/cardImage";
 import Carousel from "../components/carousel";
 import Table from "../components/tables";
 import Model from "../components/model";
+import { useLocation } from 'react-router-dom'
 
 // Stripe integration
 
@@ -15,11 +16,17 @@ import Model from "../components/model";
 
 const DetailScreen = () => {
   const { id } = useParams();
+  const location = useLocation()
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const { bookingData } = location.state;
 
+
+  
   const refresh = () => window.location.reload(true)
+
+
 
   useEffect(() => {
     setIsLoading(true);
@@ -51,7 +58,7 @@ const DetailScreen = () => {
       <div style={{ marginTop: "5rem" }}>
         <Carousel data={data} />
         <Table data={data} />
-        <Model data={data} refresh = {refresh} />
+        <Model data={data} refresh = {refresh} bookingData = {bookingData} />
       </div>
     </div>
   );
