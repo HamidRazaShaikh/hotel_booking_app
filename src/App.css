@@ -1,5 +1,4 @@
-.page-center{
-
+.page-center {
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -35,83 +34,99 @@
   margin-top: 5rem !important;
 }
 
-.card-img-top{
-
+.card-img-top {
   max-height: 20rem !important;
   width: 100% !important;
   object-fit: cover;
-
 }
 
-.btncontainer{
-
- 
+.btncontainer {
   display: flex;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: space-between;
-
-
 }
 
-
-.bookingContainer{
-
-
+.bookingContainer {
   display: flex;
   flex-direction: row;
   width: 100%;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  
-
+  margin-top: 2rem;
 }
 
-.cennter_container{
-
-
- 
-  width: 100%; 
+.cennter_container {
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  
-
-
-
 }
 
-
-.singup_container{
-
-  
-
+.singup_container {
   border: 2px solid rgb(176, 176, 179);
   border-radius: 2rem;
   padding: 2rem !important;
-
-
-  
 }
 
-.scrollDiv{
+.logo {
+  height: 3rem;
+  width: 3rem;
 
+  display: flex;
+  border-radius: 100%;
+}
 
+.scrollDiv {
   max-height: 100vh;
   overflow-x: scroll;
-  border: 2px solid grey;
+  border: 2px solid rgb(219, 212, 212);
   padding: 1rem;
 }
 
+.cardDiv {
+  background: #dfbaba;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  margin: 1rem 1rem;
+  padding: 0.2rem;
+  border: 2px solid #888888;
+  border-radius: 2rem;
+  box-shadow: 5px 10px #888888;
+  display: flex;
+}
+
+.cardDiv button {
+  margin: 1rem 2rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ccc8c8;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #c4bfbf;
+}
 
 /* strip style */
 
-
-.cardS{
+.cardS {
   background-color: white;
   padding: 10px 20px 11px;
   border-radius: 5px;
@@ -119,7 +134,7 @@
   border: 1px solid #afafaf;
   box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
 }
-.pay-button{
+.pay-button {
   padding: 0.7rem 2rem;
   width: 100%;
   margin: 1rem 0;
@@ -133,14 +148,14 @@
   transition: box-shadow 500ms;
   cursor: pointer;
 }
-.pay-button:disabled{
+.pay-button:disabled {
   background-color: #afafaf;
   box-shadow: none;
   cursor: default;
 }
-.pay-button:disabled:hover{
+.pay-button:disabled:hover {
   box-shadow: none;
 }
-.pay-button:hover{
+.pay-button:hover {
   box-shadow: 2px 5px 15px 2px rgba(0, 0, 0, 0.2);
 }

@@ -20,7 +20,9 @@ const DetailScreen = () => {
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const { bookingData } = location.state;
+  const { bookingData, active } = location.state;
+
+  console.log(location.state);
 
 
   
@@ -58,7 +60,7 @@ const DetailScreen = () => {
       <div style={{ marginTop: "5rem" }}>
         <Carousel data={data} />
         <Table data={data} />
-        <Model data={data} refresh = {refresh} bookingData = {bookingData} />
+        <Model data={data} active = {active} refresh = {refresh} bookingData = {bookingData} />
       </div>
     </div>
   );

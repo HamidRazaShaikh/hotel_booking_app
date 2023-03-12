@@ -11,6 +11,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 const Model = ({ data, refresh, active, bookingData }) => {
+
   const { rent, _id } = data;
   const closeRef = useRef();
 

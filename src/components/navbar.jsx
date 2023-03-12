@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
+import logo from "./../images/logo.jpg";
 
 const Navbar = () => {
   const Auth = useAuth();
@@ -13,9 +14,13 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-dark bg-main fixed-top">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
-          Deluxoom
-        </a>
+        <div className="d-flex flex-row align-items-center">
+          <img src={logo} className="logo" />
+          <a className="navbar-brand mx-3" href="#">
+            Deluxoom
+          </a>
+        </div>
+
         <button
           className="navbar-toggler"
           type="button"
@@ -44,22 +49,37 @@ const Navbar = () => {
           <div className="offcanvas-body  bg-main">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
+                <a className="nav-link active" aria-current="page" href="/">
                   Home
                 </a>
               </li>
+
               <li className="nav-item">
-                <button onClick={Logout} className="btn btn-danger">
+                <a
+                  className="nav-link active"
+                  aria-current="page"
+                  href="/bookings"
+                >
+                  My bookings
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a
+                  className="nav-link active"
+                  aria-current="page"
+                  href="/allrooms"
+                >
+                  All rooms
+                </a>
+              </li>
+              <li className="nav-item">
+                <button className="btn btn-light " onClick={Logout}>
                   LogOut
                 </button>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
-                  Link
-                </a>
-              </li>
             </ul>
-            <form className="d-flex mt-3" role="search">
+            {/* <form className="d-flex mt-3" role="search">
               <input
                 className="form-control me-2"
                 type="search"
@@ -69,7 +89,7 @@ const Navbar = () => {
               <button className="btn btn-success" type="submit">
                 Search
               </button>
-            </form>
+            </form> */}
           </div>
         </div>
       </div>

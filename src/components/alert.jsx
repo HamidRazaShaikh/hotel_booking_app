@@ -1,13 +1,18 @@
 import React , {useRef} from "react";
 
-const Alert = ({title, message , CancelBooking, id}) => {
+const Alert = ({title, message , CancelBooking, item, id}) => {
+
+
+// console.log(id);
 
   const closeRef = useRef();
 
   const action = ()=>{
 
+    console.log(id);
+
     CancelBooking(id)
-    closeRef.current.click()
+    // closeRef.current.click()
   }
 
   return (

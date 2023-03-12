@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Model from "./model";
 
 const CardImage = ({ item, active, bookingData }) => {
+ 
   return (
     <div className="card">
       <img src={item?.images[0]} className="card-img-top" alt="room image" />
@@ -21,13 +22,13 @@ const CardImage = ({ item, active, bookingData }) => {
         <div className="btncontainer">
           <Link
             to={`/details/${item?._id}`}
-            className={`btn btn-primary ${active ? "disabled" : null}`}
-            state={{ bookingData : bookingData}}
+            className={`btn btn-primary`}
+            state={{ bookingData : bookingData, active : active}}
           >
             Details
           </Link>
 
-          <Model data={item} active={active} bookingData={bookingData} />
+          <Model data={item} active ={active} bookingData={bookingData} />
         </div>
       </div>
     </div>

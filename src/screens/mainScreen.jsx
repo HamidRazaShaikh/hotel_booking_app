@@ -4,7 +4,7 @@ import CardImage from "../components/cardImage";
 import Loader from "../components/loading";
 import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
-import moment, { min } from "moment";
+import moment from "moment";
 import { useAuth } from "../utils/auth";
 
 const MainScreen = (props) => {
@@ -37,32 +37,52 @@ const MainScreen = (props) => {
   const dateValidater = (obj) => {
     let key = Object.keys(obj).at(0);
 
+    console.log(key);
+
     const currentdate = () => {
-      if ((key = "check_in_date")) {
+      let check_out_date = dates?.check_out_date?.date || null;
+
+      if (key === "check_in_date") {
         let { check_in_date } = obj;
+
+        const isBeforeDate = check_out_date != null ? moment(
+          moment(check_in_date).format("YYYY-MM-DD")
+        ).diff(moment(check_out_date).format("YYYY-MM-DD")): -1
 
         const dateValidate = moment(moment().format("YYYY-MM-DD")).diff(
           moment(check_in_date).format("YYYY-MM-DD")
         );
-        if (dateValidate > 0) {
+
+        console.log(dateValidate, isBeforeDate);
+        if (dateValidate > 0 || isBeforeDate > 0) {
           return false;
         } else {
           return true;
         }
       }
+
+   
     };
 
     const futureDate = () => {
-      if ((key = "check_out_date")) {
+      let check_in_date = dates?.check_in_date?.date || null;
+
+      if (key === "check_out_date") {
         let { check_out_date } = obj;
+  
+
+        const isFutureDate =  check_out_date != null ?  moment(
+          moment(check_out_date).format("YYYY-MM-DD")
+        ).diff(moment(check_in_date).format("YYYY-MM-DD")): 1;
+
         const dateValidate = moment(moment().format("YYYY-MM-DD")).diff(
           moment(check_out_date).format("YYYY-MM-DD")
         );
-
-        if (dateValidate < 0) {
-          return true;
-        } else {
+        console.log(dateValidate, isFutureDate);
+        if (dateValidate >= 0 || isFutureDate <= 0) {
           return false;
+        } else {
+          return true;
         }
       }
     };
@@ -93,7 +113,8 @@ const MainScreen = (props) => {
     const calDuration = () => {
       if (
         dates?.check_in_date?.isValidated &&
-        dates?.check_out_date?.isValidated
+        dates?.check_out_date?.isValidated &&
+        dates
       ) {
         let { check_in_date, check_out_date } = dates;
 
@@ -115,11 +136,65 @@ const MainScreen = (props) => {
             user: user,
           });
         }
+      } else {
+        setActive(true);
+        if (
+          typeof dates?.check_in_date?.date === "undefined" ||
+          typeof dates?.check_out_date?.date === "undefined"
+        ) {
+          setDuration("choose dates");
+        } else {
+          setDuration("choose correct date");
+        }
       }
     };
 
     calDuration();
-  }, [dates]);
+  }, [dates, data]);
+
+  // console.log(dates);
+
+  const filter = () => {
+    let dateArray = [];
+    let testDate1 = dates?.check_in_date?.date;
+    let testDate2 = dates?.check_out_date?.date;
+
+    if (data) {
+      data.forEach((item) =>
+        item?.bookings.forEach((term) => {
+          if (testDate1) {
+            dateArray.push({
+              startDate: term?.From_date,
+              endDate: term?.To_date,
+              roomid: item?._id,
+            });
+          }
+        })
+      );
+    }
+
+    if (testDate1) {
+      dateArray.forEach((item) => {
+        let startDate = moment(item?.startDate, "YYYY/MM/DD");
+        let endDate = moment(item?.endDate, "YYYY/MM/DD");
+        let testDate01 = moment(testDate1, "YYYY/MM/DD");
+        let testDate02 = moment(testDate2, "YYYY/MM/DD");
+        const inDate = testDate01.isBetween(startDate, endDate, "days", true); // will return true
+        const outDate = testDate02.isBetween(startDate, endDate, "days", true); // will return true
+        // console.log(data);
+        if (inDate || outDate) {
+          const availableRooms = data?.filter(
+            (room) => room._id !== item?.roomid
+          );
+          setData(availableRooms);
+        }
+      });
+    }
+  };
+
+  // console.log(data);
+
+  filter();
 
   if (isLoading) {
     return <Loader />;
@@ -139,7 +214,7 @@ const MainScreen = (props) => {
               className="form-control"
               onChange={handleChange}
               name="check_in_date"
-              // value={dates?.check_in_date?.date}
+              value={dates?.check_in_date?.date || ''}
             />
 
             {dates?.check_in_date?.date
@@ -158,6 +233,7 @@ const MainScreen = (props) => {
               className="form-control"
               onChange={handleChange}
               name="check_out_date"
+              value={dates?.check_out_date?.date || ''}
             />
 
             {dates?.check_out_date?.date
@@ -178,6 +254,10 @@ const MainScreen = (props) => {
               name="duration"
               disabled={true}
               value={duration}
+              style={{
+                color: typeof duration === "string" ? "red" : "green",
+                fontWeight: "bold",
+              }}
             />
           </div>
         </div>

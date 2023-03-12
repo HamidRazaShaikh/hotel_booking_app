@@ -4,6 +4,9 @@ import Alert from "./alert";
 const Card = ({ item, data, CancelBooking }) => {
   const [showAlert, setShowAlert] = useState(false);
 
+
+  // console.log(item?.id);
+
   if (item) {
     return (
       <div className="card" style={{ width: "18rem", margin: "1rem" }}>
@@ -38,7 +41,7 @@ const Card = ({ item, data, CancelBooking }) => {
               </tr>
             </tbody>
           </table>
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -48,8 +51,8 @@ const Card = ({ item, data, CancelBooking }) => {
             <button type="button" className="btn btn-primary">
               Edit
             </button>
-            <Alert  title = 'Confirm cancellation' message = 'Do you want to cancel this booking?' CancelBooking = {CancelBooking} id = {item?.id}/>
-          </div>
+            <Alert  title = 'Confirm cancellation' message = 'Do you want to cancel this booking?' CancelBooking = {CancelBooking} id = {item?.id} item = {item}/>
+          </div> */}
         </div>
       
       </div>
