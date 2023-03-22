@@ -5,31 +5,29 @@ import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
 import Loader from "../components/loading";
 import Navbar from "../components/navbar";
-import Card from "../components/card";
 import SweetAlert from "react-bootstrap-sweetalert";
+import ModelEdit from "../components/modelEdit";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
-// Stripe integration
+import { MyDocument } from "../components/doc";
 
 const BookingScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState();
-  const [bookings, setBookings] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [sortedBookings, setSortedBookings] = useState();
   const [show, setShow] = useState(false);
-  const [cancelId, setCancelId] = useState();
+  const [action, setAction] = useState(null, null);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const res = await axios.get("/api/rooms/roombyid", {
+        const res = await axios.get("/api/bookings/bookingByUser", {
           params: { id },
         });
         const { data } = await res?.data;
         setData(data);
-        setBookings(data?.bookings);
         setIsLoading(false);
       } catch (error) {
         navigate("*");
@@ -40,51 +38,48 @@ const BookingScreen = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    let sortedBookings = bookings?.sort((a, b) => {
-      var dateA = new Date(a.booked_At).getTime();
-      var dateB = new Date(b.booked_At).getTime();
+  const actionHandle = async (action) => {
+    setShow(false);
+    setIsLoading(true);
 
-      return dateA < dateB ? 1 : -1;
-    });
+    const { key, id, book } = action;
 
-    setSortedBookings(sortedBookings);
-  }, [bookings, data]);
+    switch (key) {
+      case "cancel":
+        try {
+          const resp = await axios.delete("/api/bookings/cancelBooking", {
+            params: { id },
+          });
+          const { booking } = await resp?.data;
 
-  const setCancel = (id) => {
-    console.log(id);
-    setShow(true);
-    setCancelId(id);
-  };
+          if (booking) {
+            const newBookings = data.filter((item) => item._id !== id);
+            setData(newBookings);
+          }
 
-  const CancelBooking = async (id) => {
-    let currentData = data;
+          setIsLoading(false);
+          setAction();
+        } catch (error) {
+          console.log(error);
+          setAction();
+          setIsLoading(false);
+        }
+    }
 
-    try {
-      let upDatedBookings = await bookings?.filter((item) => item.id !== id);
-
-      let bookingData = await { ...currentData, bookings: upDatedBookings };
-      console.log(upDatedBookings);
-
-      const res = await axios.put("/api/rooms/booking", {
-        id: currentData?._id,
-        bookingData,
-      });
-      const { data } = await res?.data;
-      setData(data);
-      setBookings(upDatedBookings);
-
-      console.log(data);
-
-      setShow(false);
-    } catch (error) {
-      console.log(error);
-
-      setShow(false);
+    switch (key) {
+      case "edit":
+        try {
+          const index = data.findIndex((item) => item?._id === id);
+          data.splice(index, 1, book);
+          setAction();
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+          setIsLoading(false);
+          setAction();
+        }
     }
   };
-
-  // console.log(show);
 
   if (isLoading) {
     return <Loader />;
@@ -101,34 +96,87 @@ const BookingScreen = () => {
           Your bookings
         </h1>
         <div className="bookingContainer">
-          {!!sortedBookings &&
-            sortedBookings.map((item, index) => {
-              return (
-                <div className="cardDiv" key={index}>
-                  {/* <h1>{index}</h1> */}
-                  <Card item={item} data={data} CancelBooking={CancelBooking} />
+          <table className="table table-hover text-center">
+            <thead>
+              <tr>
+                <th scope="col">S.No</th>
+                <th scope="col">Reserved for</th>
+                <th scope="col">Room</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Duration</th>
+                <th scope="col">Amount</th>
+                <th scope="col" colSpan="3">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.length !== 0 ? (
+                data.map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <th scope="row">{index + 1}</th>
+                      <td>{item.Name}</td>
+                      <td>{item.name}</td>
+                      <td>{item.From_date}</td>
+                      <td>{item.To_date}</td>
+                      <td>{item.Duration}</td>
+                      <td>${item.Amount}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => {
+                            setAction({
+                              key: "edit",
+                              id: item?._id,
+                              book: item,
+                            });
 
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <button type="button" className="btn btn-primary">
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() => setCancel(item?.id)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                            // setShow(true);
+                          }}
+                        >
+                          Edit
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => {
+                            setAction({
+                              key: "cancel",
+                              id: item?._id,
+                              book: "",
+                            });
+                            setShow(true);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                      <td>
+                        <PDFDownloadLink
+                          document={<MyDocument data={item} />}
+                          fileName="mydocument.pdf"
+                          className="btn btn-warning"
+                          style={{ color: "#fff" }}
+                        >
+                          Download PDF
+                        </PDFDownloadLink>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td scope="col" colSpan="7">
+                    {" "}
+                    No Bookings found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -140,9 +188,13 @@ const BookingScreen = () => {
           confirmBtnBsStyle="danger"
           title="Are you sure?"
           focusCancelBtn
-          onConfirm={() => CancelBooking(cancelId)}
+          onConfirm={() => actionHandle(action)}
           onCancel={() => setShow(false)}
         />
+      ) : null}
+
+      {action?.key === "edit" ? (
+        <ModelEdit bookingData={action?.book} actionHandle={actionHandle} />
       ) : null}
     </div>
   );

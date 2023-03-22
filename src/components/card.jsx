@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import Alert from "./alert";
 
 const Card = ({ item, data, CancelBooking }) => {
+
   const [showAlert, setShowAlert] = useState(false);
 
 
-  // console.log(item?.id);
 
   if (item) {
     return (
       <div className="card" style={{ width: "18rem", margin: "1rem" }}>
-        <img src={data?.images?.at(0)} className="card-img-top" alt="..." />
+        <img src={item?.images?.at(0)} className="card-img-top" alt="..." />
         <div className="card-body">
           <h5 className="card-title">
             {data?.name} {data?.category}
@@ -31,28 +31,17 @@ const Card = ({ item, data, CancelBooking }) => {
               </tr>
               <tr>
                 <td>Duration</td>
-                <th scope="row">{`${item?.duration}${
+                <th scope="row">{`${item?.Duration}${
                   item?.duration === 1 ? "day" : "days"
                 }`}</th>
               </tr>
               <tr>
                 <td>Payed</td>
-                <th scope="row">{`$${item?.amount}`}</th>
+                <th scope="row">{`$${item?.Amount}`}</th>
               </tr>
             </tbody>
           </table>
-          {/* <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <button type="button" className="btn btn-primary">
-              Edit
-            </button>
-            <Alert  title = 'Confirm cancellation' message = 'Do you want to cancel this booking?' CancelBooking = {CancelBooking} id = {item?.id} item = {item}/>
-          </div> */}
+          
         </div>
       
       </div>

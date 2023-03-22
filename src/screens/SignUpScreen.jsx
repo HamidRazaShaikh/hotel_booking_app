@@ -25,10 +25,10 @@ const SignUpScreen = () => {
   });
 
   const onFormSubmit = (values) => {
-    console.log(values);
+   
     setIsLoading(true);
     const SignUp = async () => {
-      console.log(values);
+    
       try {
         const res = await axios.post("/api/users/signup", { userData: values });
         const { data } = await res?.data;

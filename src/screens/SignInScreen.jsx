@@ -14,8 +14,6 @@ const SignInScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-
   let bookingSchema = yup.object().shape({
     email: yup.string().required("this feild is required."),
     password: yup
@@ -27,13 +25,12 @@ const SignInScreen = () => {
 
   const onFormSubmit = (values) => {
     const SignUp = async () => {
-      console.log(values);
       setIsLoading(true);
       try {
         const res = await axios.post("/api/users/signin", { userData: values });
         const { data } = await res?.data;
-        let { _id, name, email } = data;         
-       
+        let { _id, name, email } = data;
+
         Auth.login({ _id, name, email });
         setIsLoading(false);
       } catch (error) {

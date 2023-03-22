@@ -6,16 +6,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
 import moment from "moment";
 import { useAuth } from "../utils/auth";
+import { useLocalStorage } from "../utils/useLocalStorage";
 
 const MainScreen = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  // const [dates, setDates] = useLocalStorage("dates", null);
   const [dates, setDates] = useState();
   const [duration, setDuration] = useState(0);
   const [active, setActive] = useState(true);
   const [bookingData, setBookingData] = useState();
+  const [roomLoading, setRoomLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -25,19 +28,25 @@ const MainScreen = (props) => {
         const { data } = await res?.data;
         setData(data);
         setIsLoading(false);
+        setRoomLoading(false);
       } catch (error) {
         navigate("*");
         setIsLoading(false);
+        setRoomLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (typeof duration !== "number") {
+      setActive(true);
+    }
+  }, [duration]);
+
   const dateValidater = (obj) => {
     let key = Object.keys(obj).at(0);
-
-    console.log(key);
 
     const currentdate = () => {
       let check_out_date = dates?.check_out_date?.date || null;
@@ -45,23 +54,23 @@ const MainScreen = (props) => {
       if (key === "check_in_date") {
         let { check_in_date } = obj;
 
-        const isBeforeDate = check_out_date != null ? moment(
-          moment(check_in_date).format("YYYY-MM-DD")
-        ).diff(moment(check_out_date).format("YYYY-MM-DD")): -1
+        const isBeforeDate =
+          check_out_date != null
+            ? moment(moment(check_in_date).format("YYYY-MM-DD")).diff(
+                moment(check_out_date).format("YYYY-MM-DD")
+              )
+            : -1;
 
         const dateValidate = moment(moment().format("YYYY-MM-DD")).diff(
           moment(check_in_date).format("YYYY-MM-DD")
         );
 
-        console.log(dateValidate, isBeforeDate);
         if (dateValidate > 0 || isBeforeDate > 0) {
           return false;
         } else {
           return true;
         }
       }
-
-   
     };
 
     const futureDate = () => {
@@ -69,16 +78,18 @@ const MainScreen = (props) => {
 
       if (key === "check_out_date") {
         let { check_out_date } = obj;
-  
 
-        const isFutureDate =  check_out_date != null ?  moment(
-          moment(check_out_date).format("YYYY-MM-DD")
-        ).diff(moment(check_in_date).format("YYYY-MM-DD")): 1;
+        const isFutureDate =
+          check_out_date != null
+            ? moment(moment(check_out_date).format("YYYY-MM-DD")).diff(
+                moment(check_in_date).format("YYYY-MM-DD")
+              )
+            : 1;
 
         const dateValidate = moment(moment().format("YYYY-MM-DD")).diff(
           moment(check_out_date).format("YYYY-MM-DD")
         );
-        console.log(dateValidate, isFutureDate);
+
         if (dateValidate >= 0 || isFutureDate <= 0) {
           return false;
         } else {
@@ -133,7 +144,8 @@ const MainScreen = (props) => {
             From_date: dates?.check_in_date?.date,
             duration:
               duration.asDays() > 0 ? duration.asDays() : "choose correct date",
-            user: user,
+            userId: user?._id,
+            userEmail: user?.email,
           });
         }
       } else {
@@ -152,49 +164,48 @@ const MainScreen = (props) => {
     calDuration();
   }, [dates, data]);
 
-  // console.log(dates);
+  // bookings and availble rooms
 
-  const filter = () => {
-    let dateArray = [];
-    let testDate1 = dates?.check_in_date?.date;
-    let testDate2 = dates?.check_out_date?.date;
+  useEffect(() => {
+    const fetchData = async () => {
+      let start_date = dates?.check_in_date?.date;
+      let end_date = dates?.check_out_date?.date;
+      setRoomLoading(true);
 
-    if (data) {
-      data.forEach((item) =>
-        item?.bookings.forEach((term) => {
-          if (testDate1) {
-            dateArray.push({
-              startDate: term?.From_date,
-              endDate: term?.To_date,
-              roomid: item?._id,
+      try {
+        const res = await axios.get("/api/bookings/getBookedIds", {
+          params: { start_date, end_date },
+        });
+        const { booked } = await res?.data;
+
+        if (booked.length !== 0) {
+          const availableRooms = data.filter((el) => {
+            return booked.some((f) => {
+              return f.roomID !== el._id;
             });
-          }
-        })
-      );
-    }
+          });
 
-    if (testDate1) {
-      dateArray.forEach((item) => {
-        let startDate = moment(item?.startDate, "YYYY/MM/DD");
-        let endDate = moment(item?.endDate, "YYYY/MM/DD");
-        let testDate01 = moment(testDate1, "YYYY/MM/DD");
-        let testDate02 = moment(testDate2, "YYYY/MM/DD");
-        const inDate = testDate01.isBetween(startDate, endDate, "days", true); // will return true
-        const outDate = testDate02.isBetween(startDate, endDate, "days", true); // will return true
-        // console.log(data);
-        if (inDate || outDate) {
-          const availableRooms = data?.filter(
-            (room) => room._id !== item?.roomid
-          );
           setData(availableRooms);
+          setRoomLoading(false);
+        } else {
+          const res = await axios.get("/api/rooms/allrooms");
+          const { data } = await res?.data;
+          setData(data);
+          setRoomLoading(false);
         }
-      });
+
+        setRoomLoading(false);
+      } catch (error) {
+        setRoomLoading(false);
+      }
+    };
+
+    if (typeof duration === "number") {
+      fetchData();
     }
-  };
+  }, [dates?.check_in_date , dates?.check_out_date , duration]);
 
-  // console.log(data);
 
-  filter();
 
   if (isLoading) {
     return <Loader />;
@@ -214,7 +225,7 @@ const MainScreen = (props) => {
               className="form-control"
               onChange={handleChange}
               name="check_in_date"
-              value={dates?.check_in_date?.date || ''}
+              value={dates?.check_in_date?.date || ""}
             />
 
             {dates?.check_in_date?.date
@@ -233,7 +244,7 @@ const MainScreen = (props) => {
               className="form-control"
               onChange={handleChange}
               name="check_out_date"
-              value={dates?.check_out_date?.date || ''}
+              value={dates?.check_out_date?.date || ""}
             />
 
             {dates?.check_out_date?.date
@@ -262,9 +273,16 @@ const MainScreen = (props) => {
           </div>
         </div>
       </div>
-      <h2> Rooms</h2>
+      <h2>
+        {" "}
+        {dates?.check_out_date?.date ? "Available Rooms" : "Rooms"} :{" "}
+        {data?.length < 10 ? `0${data?.length}` : data?.length}
+      </h2>
       <div className="scrollDiv container">
-        {data &&
+        {roomLoading ? (
+          <Loader />
+        ) : (
+          data &&
           data?.map((item, index) => {
             return (
               <CardImage
@@ -274,7 +292,8 @@ const MainScreen = (props) => {
                 bookingData={bookingData}
               />
             );
-          })}
+          })
+        )}
       </div>
     </div>
   );

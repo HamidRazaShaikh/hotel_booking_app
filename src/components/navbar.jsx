@@ -5,11 +5,13 @@ import logo from "./../images/logo.jpg";
 
 const Navbar = () => {
   const Auth = useAuth();
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
   const Logout = () => {
     Auth.logout();
+    window.localStorage.removeItem('dates')
   };
   return (
     <nav className="navbar navbar-dark bg-main fixed-top">
@@ -58,7 +60,7 @@ const Navbar = () => {
                 <a
                   className="nav-link active"
                   aria-current="page"
-                  href="/bookings"
+                  href = {`/bookings/${user?._id}`}
                 >
                   My bookings
                 </a>

@@ -3,8 +3,10 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { useAuth } from "../utils/auth";
 
 export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
+  const { user } = useAuth();
   const { Name, Country, amount } = ClientData;
   const { _id } = roomData;
   const navigate = useNavigate();
@@ -13,6 +15,29 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
   const [clientSecret, setClientSecret] = useState("");
   const stripe = useStripe();
   const elements = useElements();
+
+  const BookingObj = {
+    Name: ClientData?.Name,
+    Country: ClientData?.Country,
+    ID: ClientData?.ID,
+    Address: ClientData?.Address,
+    From_date: ClientData?.From_date,
+    To_date: ClientData?.To_date,
+    Duration: ClientData?.duration,
+    Amount: ClientData?.amount,
+    userId: ClientData?.userId,
+    userEmail: ClientData?.userEmail,
+    name: roomData?.name,
+    category: roomData?.category,
+    images: roomData?.images,
+    capacity: roomData?.capacity,
+    description: roomData?.description,
+    roomID: roomData?._id,
+  };
+
+  console.log(roomData);
+
+  console.log(BookingObj);
 
   useEffect(() => {
     fetch("http://localhost:4000/create-payment-intent", {
@@ -30,17 +55,10 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
 
   const addBooking = async () => {
     try {
-      let previousBookings = await roomData?.bookings;
-      let bookingData = await {
-        ...roomData,
-        bookings: [...previousBookings, {id: crypto.randomUUID(), booked_At: moment() , ...ClientData}],
-      };
-
-      const res = await axios.put("/api/rooms/booking", { id: _id, bookingData });
+      const res = await axios.post("/api/bookings/addBooking", {
+        bookingData: BookingObj,
+      });
       const { data } = await res?.data;
-      
-
-    
     } catch (error) {
       console.log(error);
     }
@@ -64,15 +82,15 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
     setPaymentLoading(false);
     if (paymentResult.error) {
       alert(paymentResult.error.message);
-      handleClose({reload : true});
+      handleClose({ reload: true });
 
       navigate(`/details/${_id}`);
     } else {
       if (paymentResult.paymentIntent.status === "succeeded") {
         await addBooking();
         alert("Success!");
-        handleClose({reload : false});
-        navigate(`/bookings/${_id}`);
+        handleClose({ reload: false });
+        navigate(`/bookings/${user?._id}`);
       }
     }
   };
