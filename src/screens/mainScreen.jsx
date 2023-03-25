@@ -177,13 +177,21 @@ const MainScreen = (props) => {
           params: { start_date, end_date },
         });
         const { booked } = await res?.data;
+        console.log(booked);
 
         if (booked.length !== 0) {
-          const availableRooms = data.filter((el) => {
-            return booked.some((f) => {
-              return f.roomID !== el._id;
-            });
-          });
+          // const availableRooms = data.filter((el) => {
+          //   return booked.some((f) => {
+          //     return f.roomID !== el._id;
+          //   });
+          // });
+
+          // let availableRooms = data.filter(function (item) {
+          //   return booked.indexOf(item?._id) === -1;
+          // });
+
+
+          const availableRooms = data.filter(({_id}) => !booked.includes(_id));
 
           setData(availableRooms);
           setRoomLoading(false);
@@ -203,9 +211,7 @@ const MainScreen = (props) => {
     if (typeof duration === "number") {
       fetchData();
     }
-  }, [dates?.check_in_date , dates?.check_out_date , duration]);
-
-
+  }, [dates?.check_in_date, dates?.check_out_date, duration]);
 
   if (isLoading) {
     return <Loader />;
