@@ -6,7 +6,7 @@ const CardImage = ({ item, active, bookingData, show }) => {
 
 
   return (
-    <div className="card">
+    <div className="card mt-2">
       <img src={item?.images[0]} className="card-img-top" alt="room image" />
       <div className="card-body">
         <h5 className="card-title">

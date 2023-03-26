@@ -39,8 +39,8 @@ const AllRoomScreen = (props) => {
     <div className="container">
       <Navbar />
       <div className="divCont">
-        <h1> All Rooms </h1>
-        <div className="scrollDiv container">
+        <h1 className="h1 sm-h5"> All Rooms </h1>
+        <div className="scrollDiv container-sm">
           {roomLoading ? (
             <Loader />
           ) : (

@@ -97,87 +97,87 @@ const BookingScreen = () => {
         </h1>
         <div className="bookingContainer">
           <div className="table-responsive">
-          <table className="table table-hover text-center">
-            <thead>
-              <tr>
-                <th scope="col">S.No</th>
-                <th scope="col">Reserved for</th>
-                <th scope="col">Room</th>
-                <th scope="col">From</th>
-                <th scope="col">To</th>
-                <th scope="col">Duration</th>
-                <th scope="col">Amount</th>
-                <th scope="col" colSpan="3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.length !== 0 ? (
-                data.map((item, index) => {
-                  return (
-                    <tr key={index}>
-                      <th scope="row">{index + 1}</th>
-                      <td>{item.Name}</td>
-                      <td>{item.name}</td>
-                      <td>{item.From_date}</td>
-                      <td>{item.To_date}</td>
-                      <td>{item.Duration}</td>
-                      <td>${item.Amount}</td>
-                      <td>
-                        <button
-                          className="btn btn-primary  btn-sm"
-                          onClick={() => {
-                            setAction({
-                              key: "edit",
-                              id: item?._id,
-                              book: item,
-                            });
-
-                            // setShow(true);
-                          }}
-                        >
-                          Edit
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => {
-                            setAction({
-                              key: "cancel",
-                              id: item?._id,
-                              book: "",
-                            });
-                            setShow(true);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                      <td>
-                        <PDFDownloadLink
-                          document={<MyDocument data={item} />}
-                          fileName="mydocument.pdf"
-                          className="btn btn-warning btn-sm"
-                          style={{ color: "#fff" }}
-                        >
-                          Download
-                        </PDFDownloadLink>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
+            <table className="table table-hover text-center">
+              <thead>
                 <tr>
-                  <td scope="col" colSpan="7">
-                    {" "}
-                    No Bookings found
-                  </td>
+                  <th scope="col">S.No</th>
+                  <th scope="col">Reserved for</th>
+                  <th scope="col">Room</th>
+                  <th scope="col">From</th>
+                  <th scope="col">To</th>
+                  <th scope="col">Duration</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col" colSpan="3">
+                    Action
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.length !== 0 ? (
+                  data.map((item, index) => {
+                    return (
+                      <tr key={index}>
+                        <th scope="row">{index + 1}</th>
+                        <td>{item.Name}</td>
+                        <td>{item.name}</td>
+                        <td>{item.From_date}</td>
+                        <td>{item.To_date}</td>
+                        <td>{item.Duration}</td>
+                        <td>${item.Amount}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary  btn-sm"
+                            onClick={() => {
+                              setAction({
+                                key: "edit",
+                                id: item?._id,
+                                book: item,
+                              });
+
+                              // setShow(true);
+                            }}
+                          >
+                            Edit
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => {
+                              setAction({
+                                key: "cancel",
+                                id: item?._id,
+                                book: "",
+                              });
+                              setShow(true);
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </td>
+                        <td>
+                          <PDFDownloadLink
+                            document={<MyDocument data={item} />}
+                            fileName="mydocument.pdf"
+                            className="btn btn-warning btn-sm"
+                            style={{ color: "#fff" }}
+                          >
+                            Download
+                          </PDFDownloadLink>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td scope="col" colSpan="7">
+                      {" "}
+                      No Bookings found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
