@@ -4,8 +4,6 @@ import Model from "./model";
 
 const CardImage = ({ item, active, bookingData, show }) => {
 
-  console.log(show);
-
 
   return (
     <div className="card">

@@ -89,7 +89,7 @@ const BookingScreen = () => {
     <div className="container">
       <Navbar />
       <div style={{ marginTop: "6rem" }}>
-        <h1>
+        <h1 className="h1 h5-sm">
           <span style={{ marginRight: 20 }} onClick={() => navigate("/")}>
             <FaArrowLeft size={25} />
           </span>

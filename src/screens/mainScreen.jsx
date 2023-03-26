@@ -178,7 +178,7 @@ const MainScreen = (props) => {
           params: { start_date, end_date },
         });
         const { booked } = await res?.data;
-        console.log(booked);
+ 
 
         if (booked.length !== 0) {
           const availableRooms = await data.filter(
