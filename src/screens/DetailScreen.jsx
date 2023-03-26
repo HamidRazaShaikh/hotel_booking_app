@@ -21,7 +21,7 @@ const DetailScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { bookingData, active } = location.state;
 
-  console.log(location.state);
+
 
   const refresh = () => window.location.reload(true);
 

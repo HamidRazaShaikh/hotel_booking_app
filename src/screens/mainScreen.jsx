@@ -37,12 +37,6 @@ const MainScreen = (props) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (typeof duration !== "number") {
-      setActive(true);
-    }
-  }, [duration]);
-
   // function for date validation
 
   const dateValidater = (obj) => {
@@ -104,6 +98,8 @@ const MainScreen = (props) => {
   const handleChange = (e) => {
     e.preventDefault();
 
+    setActive(true);
+
     let isValidated = dateValidater({ [e.target.name]: e.target.value });
     if (isValidated) {
       setDates({
@@ -139,7 +135,6 @@ const MainScreen = (props) => {
         );
 
         if (duration?.asDays() > 0) {
-          setActive(false);
           setBookingData({
             To_date: dates?.check_out_date?.date,
             From_date: dates?.check_in_date?.date,
@@ -150,7 +145,6 @@ const MainScreen = (props) => {
           });
         }
       } else {
-        setActive(true);
         if (
           typeof dates?.check_in_date?.date === "undefined" ||
           typeof dates?.check_out_date?.date === "undefined"
@@ -167,38 +161,37 @@ const MainScreen = (props) => {
 
   // bookings and availble rooms
 
-  useEffect(() => {
-    const fetchData = async () => {
-      let start_date = dates?.check_in_date?.date;
-      let end_date = dates?.check_out_date?.date;
-      setRoomLoading(true);
+  const SearchRoom = async () => {
+    let start_date = dates?.check_in_date?.date;
+    let end_date = dates?.check_out_date?.date;
+    setRoomLoading(true);
 
-      try {
-        const res = await axios.get("/api/bookings/getBookedIds", {
-          params: { start_date, end_date },
-        });
-        const { booked } = await res?.data;
- 
+    try {
+      const res = await axios.get("/api/bookings/getBookedIds", {
+        params: { start_date, end_date },
+      });
+      const { booked } = await res?.data;
 
-        if (booked.length !== 0) {
-          const availableRooms = await data.filter(
-            ({ _id }) => !booked.includes(_id)
-          );
+      if (booked.length !== 0) {
+        const availableRooms = await data.filter(
+          ({ _id }) => !booked.includes(_id)
+        );
 
-          setData(availableRooms);
-          setRoomLoading(false);
-        }
-
+        setData(availableRooms);
         setRoomLoading(false);
-      } catch (error) {
+        setActive(false);
+      } else {
+        const res = await axios.get("/api/rooms/allrooms");
+        const { data } = await res?.data;
+        setData(data);
+        setIsLoading(false);
         setRoomLoading(false);
+        setActive(false);
       }
-    };
-
-    if (typeof duration === "number") {
-      fetchData();
+    } catch (error) {
+      setRoomLoading(false);
     }
-  }, [dates?.check_in_date, dates?.check_out_date, duration]);
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -264,12 +257,27 @@ const MainScreen = (props) => {
               }}
             />
           </div>
+
+          <div className="p-2 w-100 d-flex  align">
+            <button
+              type="button"
+              className="btn btn-primary w-100 mt-4"
+              onClick={SearchRoom}
+            >
+              {" "}
+              Search Room
+            </button>
+          </div>
         </div>
       </div>
       <h2>
         {" "}
         {dates?.check_out_date?.date ? "Available Rooms" : "Rooms"} :{" "}
-        {data?.length < 10 ? `0${data?.length}` : data?.length}
+        {data?.length !== 0
+          ? data?.length < 10
+            ? `0${data?.length}`
+            : data?.length
+          : `No Room Available`}
       </h2>
       <div className="scrollDiv container">
         {roomLoading ? (
@@ -283,7 +291,7 @@ const MainScreen = (props) => {
                 item={item}
                 active={active}
                 bookingData={bookingData}
-                show = {true}
+                show={true}
               />
             );
           })

@@ -4,6 +4,7 @@ import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useAuth } from "../utils/auth";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
   const { user } = useAuth();
@@ -88,6 +89,17 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
     } else {
       if (paymentResult.paymentIntent.status === "succeeded") {
         await addBooking();
+
+        // <SweetAlert
+        //   warning
+        //   showCancel
+        //   confirmBtnText="Yes, cancel it!"
+        //   confirmBtnBsStyle="danger"
+        //   title="Are you sure?"
+        //   focusCancelBtn
+        //   onConfirm={() => actionHandle(action)}
+        //   onCancel={() => setShow(false)}
+        // />
         alert("Success!");
         handleClose({ reload: false });
         navigate(`/bookings/${user?._id}`);

@@ -12,6 +12,7 @@ import { Elements } from "@stripe/react-stripe-js";
 
 const Model = ({ data, refresh, active, bookingData }) => {
   const { rent, _id } = data;
+
   const closeRef = useRef();
 
   const amount = rent * bookingData?.duration;
@@ -52,6 +53,7 @@ const Model = ({ data, refresh, active, bookingData }) => {
       ClientData: { ...values, ...bookingData, amount },
     });
     setShowPay(true);
+    
   };
 
   useEffect(() => {
@@ -91,6 +93,7 @@ const Model = ({ data, refresh, active, bookingData }) => {
         tabIndex="-1"
         aria-labelledby="staticBackdropLabel"
         aria-hidden="true"
+    
       >
         <div className="modal-dialog modal-dialog-scrollable">
           <div className="modal-content">

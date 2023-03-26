@@ -52,7 +52,7 @@ const AllRoomScreen = (props) => {
                   item={item}
                   active={active}
                   bookingData={bookingData}
-                  show = {false}
+                  show={false}
                 />
               );
             })
