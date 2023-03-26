@@ -6,17 +6,16 @@ import PageNotFound from "./screens/404";
 import { Routes, Route } from "react-router-dom";
 import DetailScreen from "./screens/DetailScreen";
 import BookingScreen from "./screens/BookingScreen";
+import AllRoomScreen from "./screens/AllRoomScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SignInScreen from "./screens/SignInScreen";
 import { ProtectedRoute } from "./protected/protected";
-import Navbar from "./components/navbar";
+
 
 function App() {
-
   return (
     <AuthProvider>
       <div className="App">
-       
         <Routes>
           <Route path="*" element={<PageNotFound />} />
           <Route path="/signin" element={<SignInScreen />}></Route>
@@ -42,6 +41,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <BookingScreen />
+              </ProtectedRoute>
+            }
+          ></Route>
+
+          <Route
+            path="/allRooms"
+            element={
+              <ProtectedRoute>
+                <AllRoomScreen />
               </ProtectedRoute>
             }
           ></Route>

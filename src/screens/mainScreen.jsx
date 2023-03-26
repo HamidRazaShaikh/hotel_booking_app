@@ -6,14 +6,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
 import moment from "moment";
 import { useAuth } from "../utils/auth";
-import { useLocalStorage } from "../utils/useLocalStorage";
 
 const MainScreen = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  // const [dates, setDates] = useLocalStorage("dates", null);
   const [dates, setDates] = useState();
   const [duration, setDuration] = useState(0);
   const [active, setActive] = useState(true);
@@ -44,6 +42,8 @@ const MainScreen = (props) => {
       setActive(true);
     }
   }, [duration]);
+
+  // function for date validation
 
   const dateValidater = (obj) => {
     let key = Object.keys(obj).at(0);
@@ -120,6 +120,7 @@ const MainScreen = (props) => {
     }
   };
 
+  // Duration calculator
   useEffect(() => {
     const calDuration = () => {
       if (
@@ -180,25 +181,11 @@ const MainScreen = (props) => {
         console.log(booked);
 
         if (booked.length !== 0) {
-          // const availableRooms = data.filter((el) => {
-          //   return booked.some((f) => {
-          //     return f.roomID !== el._id;
-          //   });
-          // });
-
-          // let availableRooms = data.filter(function (item) {
-          //   return booked.indexOf(item?._id) === -1;
-          // });
-
-
-          const availableRooms = data.filter(({_id}) => !booked.includes(_id));
+          const availableRooms = await data.filter(
+            ({ _id }) => !booked.includes(_id)
+          );
 
           setData(availableRooms);
-          setRoomLoading(false);
-        } else {
-          const res = await axios.get("/api/rooms/allrooms");
-          const { data } = await res?.data;
-          setData(data);
           setRoomLoading(false);
         }
 
@@ -223,8 +210,8 @@ const MainScreen = (props) => {
 
       <div className="d-flex flex-column align-items-center mt-5 pt-5 mb-5">
         <h2> Choose booking dates here...</h2>
-        <div className="d-flex flex-row w-100">
-          <div className="p-2 w-100 align-items-center d-flex flex-column">
+        <div className="resinput">
+          <div className="p-2 w-100 align d-flex flex-column">
             <label> Check-in date</label>
             <input
               type="date"
@@ -243,7 +230,7 @@ const MainScreen = (props) => {
                 )}
           </div>
 
-          <div className="p-2 w-100 align-items-center d-flex flex-column">
+          <div className="p-2 w-100 align  d-flex flex-column">
             <label> Check-out date</label>
             <input
               type="date"
@@ -262,7 +249,7 @@ const MainScreen = (props) => {
                 )}
           </div>
 
-          <div className="p-2 w-100 align-items-center d-flex flex-column">
+          <div className="p-2 w-100 align  d-flex flex-column">
             <label> Duration (Days)</label>
             <input
               type="text"
@@ -296,6 +283,7 @@ const MainScreen = (props) => {
                 item={item}
                 active={active}
                 bookingData={bookingData}
+                show = {true}
               />
             );
           })

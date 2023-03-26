@@ -2,8 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Model from "./model";
 
-const CardImage = ({ item, active, bookingData }) => {
- 
+const CardImage = ({ item, active, bookingData, show }) => {
+
+  console.log(show);
+
+
   return (
     <div className="card">
       <img src={item?.images[0]} className="card-img-top" alt="room image" />
@@ -22,13 +25,17 @@ const CardImage = ({ item, active, bookingData }) => {
         <div className="btncontainer">
           <Link
             to={`/details/${item?._id}`}
-            className={`btn btn-primary`}
-            state={{ bookingData : bookingData, active : active}}
+            className={`btn btn-primary expanded`}
+            state={{ bookingData: bookingData, active: active }}
           >
             Details
           </Link>
 
-          <Model data={item} active ={active} bookingData={bookingData} />
+          {show && (
+            <div className="expanded">
+              <Model data={item} active={active} bookingData={bookingData} />
+            </div>
+          )}
         </div>
       </div>
     </div>

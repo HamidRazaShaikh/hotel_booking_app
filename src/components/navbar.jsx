@@ -6,12 +6,11 @@ import logo from "./../images/logo.jpg";
 const Navbar = () => {
   const Auth = useAuth();
   const { user } = useAuth();
-
   const navigate = useNavigate();
 
   const Logout = () => {
     Auth.logout();
-    window.localStorage.removeItem('dates')
+    window.localStorage.removeItem("dates");
   };
   return (
     <nav className="navbar navbar-dark bg-main fixed-top">
@@ -51,28 +50,28 @@ const Navbar = () => {
           <div className="offcanvas-body  bg-main">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/">
+                <a className="nav-link" aria-current="page" href="/">
                   Home
                 </a>
               </li>
 
               <li className="nav-item">
                 <a
-                  className="nav-link active"
+                  className="nav-link"
                   aria-current="page"
-                  href = {`/bookings/${user?._id}`}
+                  href={`/bookings/${user?._id}`}
                 >
-                  My bookings
+                  My Bookings
                 </a>
               </li>
 
               <li className="nav-item">
                 <a
-                  className="nav-link active"
+                  className="nav-link"
                   aria-current="page"
-                  href="/allrooms"
+                  href="/allRooms"
                 >
-                  All rooms
+                  All Rooms
                 </a>
               </li>
               <li className="nav-item">
@@ -81,17 +80,6 @@ const Navbar = () => {
                 </button>
               </li>
             </ul>
-            {/* <form className="d-flex mt-3" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-success" type="submit">
-                Search
-              </button>
-            </form> */}
           </div>
         </div>
       </div>

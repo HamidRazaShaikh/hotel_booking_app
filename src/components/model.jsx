@@ -11,7 +11,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 const Model = ({ data, refresh, active, bookingData }) => {
-
   const { rent, _id } = data;
   const closeRef = useRef();
 
@@ -55,8 +54,6 @@ const Model = ({ data, refresh, active, bookingData }) => {
     setShowPay(true);
   };
 
-
-
   useEffect(() => {
     setShowPay(false);
   }, []);
@@ -72,12 +69,15 @@ const Model = ({ data, refresh, active, bookingData }) => {
   return (
     <div>
       {/* <!-- Button trigger modal --> */}
+
       <button
         type="button"
-        className="btn btn-danger"
+        className="btn btn-danger expanded "
         data-bs-toggle="modal"
         data-bs-target="#staticBackdrop"
         disabled={active}
+
+        
       >
         Book Now
       </button>

@@ -8,15 +8,14 @@ import CardImage from "../components/cardImage";
 import Carousel from "../components/carousel";
 import Table from "../components/tables";
 import Model from "../components/model";
-import { useLocation } from 'react-router-dom'
+import { useLocation } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 // Stripe integration
 
-
-
 const DetailScreen = () => {
   const { id } = useParams();
-  const location = useLocation()
+  const location = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -24,11 +23,7 @@ const DetailScreen = () => {
 
   console.log(location.state);
 
-
-  
-  const refresh = () => window.location.reload(true)
-
-
+  const refresh = () => window.location.reload(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -49,7 +44,6 @@ const DetailScreen = () => {
     fetchData();
   }, []);
 
-
   if (isLoading) {
     return <Loader />;
   }
@@ -58,9 +52,23 @@ const DetailScreen = () => {
     <div className="container">
       <Navbar />
       <div style={{ marginTop: "5rem" }}>
-        <Carousel data={data} />
-        <Table data={data} />
-        <Model data={data} active = {active} refresh = {refresh} bookingData = {bookingData} />
+        <h1>
+          {" "}
+          <span style={{ marginRight: 20 }} onClick={() => navigate("/")}>
+            <FaArrowLeft size={25} />
+          </span>
+          Room Details{" "}
+        </h1>
+        <div className="scrollDiv container">
+          <Carousel data={data} />
+          <Table data={data} />
+          <Model
+            data={data}
+            active={active}
+            refresh={refresh}
+            bookingData={bookingData}
+          />
+        </div>
       </div>
     </div>
   );

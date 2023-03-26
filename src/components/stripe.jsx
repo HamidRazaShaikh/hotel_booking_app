@@ -35,9 +35,9 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
     roomID: roomData?._id,
   };
 
-  console.log(roomData);
 
-  console.log(BookingObj);
+
+
 
   useEffect(() => {
     fetch("http://localhost:4000/create-payment-intent", {

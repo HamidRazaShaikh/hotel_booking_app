@@ -96,6 +96,7 @@ const BookingScreen = () => {
           Your bookings
         </h1>
         <div className="bookingContainer">
+          <div className="table-responsive">
           <table className="table table-hover text-center">
             <thead>
               <tr>
@@ -125,7 +126,7 @@ const BookingScreen = () => {
                       <td>${item.Amount}</td>
                       <td>
                         <button
-                          className="btn btn-primary"
+                          className="btn btn-primary  btn-sm"
                           onClick={() => {
                             setAction({
                               key: "edit",
@@ -141,7 +142,7 @@ const BookingScreen = () => {
                       </td>
                       <td>
                         <button
-                          className="btn btn-danger"
+                          className="btn btn-danger btn-sm"
                           onClick={() => {
                             setAction({
                               key: "cancel",
@@ -158,10 +159,10 @@ const BookingScreen = () => {
                         <PDFDownloadLink
                           document={<MyDocument data={item} />}
                           fileName="mydocument.pdf"
-                          className="btn btn-warning"
+                          className="btn btn-warning btn-sm"
                           style={{ color: "#fff" }}
                         >
-                          Download PDF
+                          Download
                         </PDFDownloadLink>
                       </td>
                     </tr>
@@ -177,6 +178,7 @@ const BookingScreen = () => {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
