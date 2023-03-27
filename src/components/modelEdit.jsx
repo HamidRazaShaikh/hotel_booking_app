@@ -9,7 +9,6 @@ const Model = ({ bookingData, actionHandle }) => {
   const closeRef = useRef();
   const openRef = useRef();
 
-  console.log(bookingData);
 
   useEffect(() => {
     openRef.current.click();
@@ -32,7 +31,7 @@ const Model = ({ bookingData, actionHandle }) => {
   const onFormSubmit = async (values) => {
     const bookingEdited = { ...bookingData, ...values };
 
-    console.log(bookingEdited);
+
 
     try {
       const res = await axios.post("/api/bookings/editBooking", {

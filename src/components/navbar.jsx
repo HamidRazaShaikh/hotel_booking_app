@@ -18,12 +18,12 @@ const Navbar = () => {
         <div className="d-flex flex-row align-items-center">
           <img src={logo} className="logo" />
           <a className="navbar-brand mx-3" href="#">
-            Deluxoom
+            Roomcroco
           </a>
         </div>
 
         <button
-          className="navbar-toggler"
+          className="navbar-toggler d-sm-none"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#offcanvasDarkNavbar"
@@ -31,6 +31,38 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
+        <div className="d-none d-sm-flex flex-row">
+        <ul className="navbar-nav d-flex flex-row">
+              <li className="nav-item mx-2 mx-md-3">
+                <a className="nav-link" aria-current="page" href="/">
+                  Home
+                </a>
+              </li>
+
+              <li className="nav-item  mx-2 mx-md-3">
+                <a
+                  className="nav-link"
+                  aria-current="page"
+                  href={`/bookings/${user?._id}`}
+                >
+                  My Bookings
+                </a>
+              </li>
+
+              <li className="nav-item  mx-2 mx-md-3">
+                <a className="nav-link" aria-current="page" href="/allRooms">
+                  All Rooms
+                </a>
+              </li>
+              <li className="nav-item  mx-2 mx-md-3">
+                <button className="btn btn-light " onClick={Logout}>
+                  LogOut
+                </button>
+              </li>
+            </ul>
+        </div>
+
         <div
           className="offcanvas offcanvas-end text-bg-dark  bg-main"
           id="offcanvasDarkNavbar"

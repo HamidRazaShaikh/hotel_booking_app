@@ -17,6 +17,7 @@ const MainScreen = (props) => {
   const [active, setActive] = useState(true);
   const [bookingData, setBookingData] = useState();
   const [roomLoading, setRoomLoading] = useState(false);
+  const [activeSearch, setActiveSearch] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -99,6 +100,7 @@ const MainScreen = (props) => {
     e.preventDefault();
 
     setActive(true);
+    setActiveSearch(true);
 
     let isValidated = dateValidater({ [e.target.name]: e.target.value });
     if (isValidated) {
@@ -115,6 +117,15 @@ const MainScreen = (props) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (
+      dates?.check_in_date?.isValidated &&
+      dates?.check_out_date?.isValidated
+    ) {
+      setActiveSearch(false);
+    }
+  }, [dates]);
 
   // Duration calculator
   useEffect(() => {
@@ -258,14 +269,14 @@ const MainScreen = (props) => {
             />
           </div>
 
-          <div className="p-2 w-100 d-flex  align">
+          <div className="p-2 w-100 d-flex align flex-column">
             <button
               type="button"
               className="btn btn-primary w-100 mt-4"
               onClick={SearchRoom}
+              disabled={activeSearch}
             >
-              {" "}
-              Search Room
+              {roomLoading ? 'Loading...': " Search Room"}
             </button>
           </div>
         </div>
