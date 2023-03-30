@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const Logout = () => {
     Auth.logout();
-    window.localStorage.removeItem("dates");
+    window.localStorage.removeItem("date");
   };
   return (
     <nav className="navbar navbar-dark bg-main fixed-top">

@@ -6,13 +6,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
 import moment from "moment";
 import { useAuth } from "../utils/auth";
+import { useLocalStorage } from "../utils/useLocalStorage";
 
 const MainScreen = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [dates, setDates] = useState();
+  const [dates, setDates] = useLocalStorage('date', null)
   const [duration, setDuration] = useState(0);
   const [active, setActive] = useState(true);
   const [bookingData, setBookingData] = useState();
@@ -28,6 +29,7 @@ const MainScreen = (props) => {
         setData(data);
         setIsLoading(false);
         setRoomLoading(false);
+        
       } catch (error) {
         navigate("*");
         setIsLoading(false);
