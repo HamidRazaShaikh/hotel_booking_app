@@ -101,7 +101,7 @@ const BookingScreen = () => {
               <thead>
                 <tr>
                   <th scope="col">S.No</th>
-                  <th scope="col">Reserved for</th>
+                  <th scope="col">Name</th>
                   <th scope="col">Room</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>
