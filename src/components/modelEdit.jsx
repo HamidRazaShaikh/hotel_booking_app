@@ -224,7 +224,7 @@ const Model = ({ bookingData, actionHandle }) => {
                           Close
                         </button>
                         <button type="submit" className="btn btn-primary">
-                          Submit
+                          Save
                         </button>
                       </div>
                     </Form>
