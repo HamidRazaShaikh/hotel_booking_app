@@ -285,7 +285,7 @@ const MainScreen = (props) => {
       </div>
       <h2>
         {" "}
-        {dates?.check_out_date?.date ? "Available Rooms" : "Rooms"} :{" "}
+        {!active ? "Available Rooms" : "Rooms"} :{" "}
         {data?.length !== 0
           ? data?.length < 10
             ? `0${data?.length}`
