@@ -69,12 +69,17 @@ const BookingScreen = () => {
     switch (key) {
       case "edit":
         try {
-          const index = data.findIndex((item) => item?._id === id);
-          data.splice(index, 1, book);
+          const res = await axios.post("/api/bookings/editBooking", {
+            id: id,
+            bookingData: book,
+          });
+          const { edited } = await res?.data;
+
+          const index = await data.findIndex((item) => item?._id === id);
+          data.splice(index, 1, edited);
           setAction();
           setIsLoading(false);
         } catch (error) {
-          console.log(error);
           setIsLoading(false);
           setAction();
         }
