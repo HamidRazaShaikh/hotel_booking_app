@@ -41,7 +41,7 @@ export function CheckoutForm({ data: { roomData, ClientData }, handleClose }) {
 
 
   useEffect(() => {
-    fetch("http://localhost:4000/create-payment-intent", {
+    fetch("https://hotelbookingappbackend-production.up.railway.app/create-payment-intent", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
